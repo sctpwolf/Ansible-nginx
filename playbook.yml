@@ -1,6 +1,8 @@
 ---
 - hosts: localhost
   sudo: true
+  vars:
+    port: 8000
 
   handlers:
 
@@ -29,8 +31,9 @@
 #          listen 8000;
 #          listen [::]:8000;
 #        state: present
+
     - name: Ensure port is correct
-      template: src=~/pup/nginxconf.j2 dest=/etc/ngnix/sites-available/default owner=root group=root mode=644
+      template:	src=~/pup/nginxconf.j2 dest=/etc/nginx/sites-available/default owner=root group=root mode=644 follow=yes
       notify:
         - reload nginx
 
