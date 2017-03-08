@@ -1,0 +1,28 @@
+hosts: local
+sudo: true
+tasks:
+  -name: get files
+    git:
+
+  - name: update apt cache
+    apt: update_cache=yes
+
+  - name: install git
+    apt: name=git state=present
+
+  - name: install nginx
+    apt: name=nginx state=present
+    notify:
+        -start nginx
+
+#  - name: Copy across new nginx config
+#    template:
+#        src=~/puppetest/nginx.conf
+#        dest=/etc/nginx/nginx.conf
+
+handlers:
+  - name: Start nginx
+    service: name=nginx state=started
+
+  - name: reload nginx
+    service: name=nginx state=reloaded
