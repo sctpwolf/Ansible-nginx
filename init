@@ -1,17 +1,15 @@
-#!/bin/bash
+#!/bin/bash -e
 
-## Install Puppet
+## Install Ansible and Git
 apt-get update
-app-get install -y git-core puppet
+app-get install -y git-core ansible
 
-sudo mv /etc/ansible/hosts /etc/ansible/hosts.orig.$RANDOM
+#Setup working directory
+mkdir ~/pup
+cd ~/pup
 
-#clone repo
-git clone https://github.com/puppetlabs/exercise-webpage /www
-
-#Create Manifest
-git clone https://github.com/sctpwolf/puppet-nginx-test ~/pnttmp
-mv nginx.pp /etc/puppet/manifests
+#Grab all the things
+git clone https://github.com/sctpwolf/puppet-nginx-test ~/pup
 
 #Provision Server
-puppet apply /etc/puppet/manifests/nginx.pp
+ansible-playbook playbook.yml
