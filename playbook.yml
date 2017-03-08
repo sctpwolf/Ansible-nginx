@@ -1,28 +1,51 @@
-hosts: local
-sudo: true
-tasks:
-  -name: get files
-    git:
+---
+- hosts: localhost
+  sudo: true
 
-  - name: update apt cache
-    apt: update_cache=yes
+  handlers:
 
-  - name: install git
-    apt: name=git state=present
+   - name: reload nginx
+     service: name=nginx state=reloaded
 
-  - name: install nginx
-    apt: name=nginx state=present
-    notify:
-        -start nginx
+  tasks:
+
+    - name: ensure webroot exists
+      file: path=/var/www/pup state=directory
+
+    - name: update apt cache
+      apt: update_cache=yes
+
+    - name: install git
+      apt: name=git state=present
+
+    - name: install nginx
+      apt: name=nginx state=present
+
+#    - name: insert/update "Match User" configuration block in /etc/ssh/sshd_config
+#      blockinfile:
+#        dest: /etc/nginx/sites-available/default
+#        insertafter: {^server {/t}
+#        block: |
+#          listen 8000;
+#          listen [::]:8000;
+#        state: present
+    - name: Ensure port is correct
+      template: src=~/pup/nginxconf.j2 dest=/etc/ngnix/sites-available/default owner=root group=root mode=644
+      notify:
+        - reload nginx
+
+    - name: ensure nginx is running
+      service: name=nginx state=started
+
+    - name: ensure current web content
+      git:
+        repo: https://github.com/puppetlabs/exercise-webpage
+        dest: /var/www/pup
+        update: yes
+      notify:
+        - reload nginx
 
 #  - name: Copy across new nginx config
 #    template:
-#        src=~/puppetest/nginx.conf
-#        dest=/etc/nginx/nginx.conf
-
-handlers:
-  - name: Start nginx
-    service: name=nginx state=started
-
-  - name: reload nginx
-    service: name=nginx state=reloaded
+#        src=~/puppetest/default
+#        dest=/etc/nginx/sites-available/default
