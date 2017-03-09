@@ -22,23 +22,11 @@
 
     - name: install nginx
       apt: name=nginx state=present
-
-#    - name: insert/update "Match User" configuration block in /etc/ssh/sshd_config
-#      blockinfile:
-#        dest: /etc/nginx/sites-available/default
-#        insertafter: {^server {/t}
-#        block: |
-#          listen 8000;
-#          listen [::]:8000;
-#        state: present
-
+      
     - name: Ensure port is correct
       template:	src=~/pup/nginxconf.j2 dest=/etc/nginx/sites-available/default owner=root group=root mode=644 follow=yes
       notify:
         - reload nginx
-
-    - name: ensure nginx is running
-      service: name=nginx state=started
 
     - name: ensure current web content
       git:
@@ -47,8 +35,7 @@
         update: yes
       notify:
         - reload nginx
-
-#  - name: Copy across new nginx config
-#    template:
-#        src=~/puppetest/default
-#        dest=/etc/nginx/sites-available/default
+        
+    - name: ensure nginx is running
+      service: name=nginx state=started
+      
