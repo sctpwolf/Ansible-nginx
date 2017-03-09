@@ -9,7 +9,7 @@ mkdir ~/pup
 cd ~/pup
 
 ##grab all the things
-git clone https://github.com/sctpwolf/puppet-nginx-text ~/pup
+git clone https://github.com/sctpwolf/puppet-nginx-test.git ~/pup
 
 ##provision server
 ansible-playbook playbook.yml
